@@ -2,10 +2,8 @@ package com.zh.deliveryroute.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zh.deliveryroute.domain.CoNode;
-import com.zh.deliveryroute.domain.ExcelTemp;
-import com.zh.deliveryroute.domain.NodeData;
-import com.zh.deliveryroute.domain.Result;
+import com.zh.deliveryroute.domain.*;
+import com.zh.deliveryroute.repository.CalcHistoryRepository;
 import com.zh.deliveryroute.repository.MongoRes;
 import com.zh.deliveryroute.repository.NodeRepository;
 import com.zh.deliveryroute.repository.TemplateResponsitory;
@@ -31,6 +29,8 @@ public class ApiController {
     NodeRepository nodeRepository;
     @Autowired
     TemplateResponsitory templateResponsitory;
+    @Autowired
+    CalcHistoryRepository calcHistoryRepository;
     @Autowired
     AlgorithService algorithService;
     @GetMapping("/getNodeList")
@@ -146,6 +146,31 @@ public class ApiController {
         return ServerResponse.createBySuccess("成功",Template);
 
     };
+    @PostMapping("/addHistory")
+    public ServerResponse addHistory(@RequestBody CalcHistory calcHistory){
+        try {
+            calcHistory.setCreateTime(getTime());
+
+            calcHistoryRepository.insert(calcHistory);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ServerResponse.createByError(e.toString(),null);
+        }
+        return ServerResponse.createBySuccess("保存成功",null);
+
+    }
+    @GetMapping("/getHistoryList")
+    public ServerResponse getHistoryList(){
+        List<CalcHistory> list;
+        try {
+            list = calcHistoryRepository.findAll();
+        }catch (Exception e){
+            e.printStackTrace();
+            return ServerResponse.createByError(e.toString(),null);
+        }
+        return ServerResponse.createBySuccess("保存成功",list);
+
+    }
 
     public long getNextId(){
         List<NodeData> list = nodeRepository.findAll();
