@@ -11,4 +11,5 @@ public class Result {
     double route[];
     double distance[];
     double weight[];
+    Object WeightType[];
 }

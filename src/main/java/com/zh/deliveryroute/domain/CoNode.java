@@ -13,4 +13,5 @@ public class CoNode {
     private float x;
     private float y;
     private float qt;
+    private String timeWindow;
 }

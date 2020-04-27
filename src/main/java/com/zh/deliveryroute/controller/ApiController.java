@@ -1,6 +1,7 @@
 package com.zh.deliveryroute.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zh.deliveryroute.domain.*;
 import com.zh.deliveryroute.repository.CalcHistoryRepository;
@@ -15,10 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.w3c.dom.Node;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 @CrossOrigin()
 @RestController
 public class ApiController {
@@ -40,22 +39,22 @@ public class ApiController {
     public ServerResponse calc(@RequestBody JSONObject jsonObject){
         Long id = jsonObject.getLong("id");
         int n = 0;//客户数
-        int m = 0;
-        int q = 0;
         int maxroad = 0;
-        int sizepop = 0;
-        int maxgen = 0;
+        JSONArray maxCarring = null;
         try {
             n = jsonObject.getInteger("n");
-            m = jsonObject.getInteger("m");
-            q = jsonObject.getInteger("q");
             maxroad = jsonObject.getInteger("maxroad");
-            sizepop = jsonObject.getInteger("sizepop");
-            maxgen = jsonObject.getInteger("maxgen");
+            maxCarring = jsonObject.getJSONArray("maxCarring");
         } catch (Exception e) {
             e.printStackTrace();
             return ServerResponse.createByError("参数出错",e.toString());
         }
+        int len = maxCarring.size();
+        int[] maxCarringArr = new int[len];
+        for(int i =0;i<len;i++){
+            maxCarringArr[i] = maxCarring.getInteger(i);
+        }
+
         NodeData nodeData = null;
         try {
             Optional<NodeData> obj = nodeRepository.findById(id);
@@ -68,9 +67,9 @@ public class ApiController {
         try {
             res = new Result();
             if(nodeData.getType().equals("coodinate")){
-                res = algorithService.getRoteByCoo(nodeData,n,m,q,maxroad,sizepop,maxgen);
+                res = algorithService.getRoteByCoo(nodeData,n,maxroad,maxCarringArr);
             }else if(nodeData.getType().equals("distance")){
-                res = algorithService.getRouteByDis(nodeData,n,m,q,maxroad,sizepop,maxgen);
+                res = algorithService.getRouteByDis(nodeData,n,maxroad,maxCarringArr);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,6 +77,33 @@ public class ApiController {
         }
 
         return ServerResponse.createBySuccess("计算成功",res);
+    }
+    @PostMapping("/calcRand")
+    public ServerResponse calcRand(@RequestBody JSONObject jsonObject){
+        Long id = jsonObject.getLong("id");
+        int m = 0;//客户数
+        int q = 0;//载重
+        int maxroad = 0;
+        Object upCarring = null;
+        try {
+            m = jsonObject.getInteger("m");
+            q = jsonObject.getInteger("q");
+            maxroad = jsonObject.getInteger("maxroad");
+            upCarring = jsonObject.get("upCarrying");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ServerResponse.createByError("参数出错",e.toString());
+        }
+
+        Result res = new Result();
+        try {
+            res = algorithService.getrouteByRound(m,q,maxroad);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ServerResponse.createByError("计算出错",e.toString());
+        }
+
+        return ServerResponse.createBySuccess("计算成功",upCarring);
     }
 
     @PostMapping("/addNode")

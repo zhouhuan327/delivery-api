@@ -1,7 +1,5 @@
 package com.zh.deliveryroute;
 
-import Test_Data_1.Class1;
-import com.mathworks.toolbox.javabuilder.MWException;
 import com.zh.deliveryroute.domain.NodeData;
 import com.zh.deliveryroute.repository.NodeRepository;
 import com.zh.deliveryroute.service.AlgorithService;
@@ -23,7 +21,7 @@ public class matlabtest {
 //        Optional<NodeData> coo = nodeRepository.findById(6L);
 //        algorithService.getRoteByCoo(coo.get(),20,5,8,50,100,1000);
 
-        Optional<NodeData> dis = nodeRepository.findById(2L);
-        algorithService.getRouteByDis(dis.get(),8,3,8,50,50,100);
+//        Optional<NodeData> dis = nodeRepository.findById(2L);
+//        algorithService.getRouteByDis(dis.get(),8,3,8,50,50,100);
     }
 }
