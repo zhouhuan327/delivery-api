@@ -25,8 +25,8 @@ public class TestController {
 //        nodelist.add(new node(4,2));
 //        mon.insert(new test(5,"33",nodelist));
 //        mon.insert(new test(6,"33",nodelist));
-        CoNode c = new CoNode("1",12,23,23);
-        nodelist.add(c);
+//        CoNode c = new CoNode("1",12,23,23);
+//        nodelist.add(c);
 //        mon.insert(new test(8,"33",nodelist));
         List<test> list = mon.findAll();
 
