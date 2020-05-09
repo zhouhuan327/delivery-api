@@ -201,7 +201,13 @@ public class ApiController {
         if(list.size() == 0){
             return id;
         }else{
-            id =list.get(list.size()-1).getId();
+            long max = 0;
+            for(int i =0;i<list.size();i++){
+                if(list.get(i).getId() > max){
+                    max = list.get(i).getId();
+                }
+            };
+            id = max;
             return ++id;
         }
     }

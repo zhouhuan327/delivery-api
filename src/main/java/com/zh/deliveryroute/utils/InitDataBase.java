@@ -9,6 +9,7 @@ import com.zh.deliveryroute.repository.TemplateResponsitory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ public class InitDataBase implements CommandLineRunner {
             List<NodeData> nodeData = nodeRepository.findAll();
             if(eList.size() == 0){
                 System.out.println("初始化excel temp...");
-                String str = readJsonFile("src/main/resources/db/ExcelTemp.json");
+                String str = readJsonFile("db/ExcelTemp.json");
                 List<ExcelTemp> list = JSON.parseArray(str, ExcelTemp.class);
                 for(int i =0;i<list.size();i++){
                     templateResponsitory.insert(list.get(i));
@@ -38,7 +39,7 @@ public class InitDataBase implements CommandLineRunner {
             }
             if(nodeData.size() == 0){
                 System.out.println("初始化默认的地图数据...");
-                String str = readJsonFile("src/main/resources/db/NodeData.json");
+                String str = readJsonFile("db/NodeData.json");
                 List<NodeData> list = JSON.parseArray(str,NodeData.class);
                 for(int i =0;i<list.size();i++){
                     nodeRepository.insert(list.get(i));
@@ -52,16 +53,13 @@ public class InitDataBase implements CommandLineRunner {
     public static String readJsonFile(String fileName) {
         String jsonStr = "";
         try {
-            File jsonFile = new File(fileName);
-            FileReader fileReader = new FileReader(jsonFile);
-
-            Reader reader = new InputStreamReader(new FileInputStream(jsonFile),"utf-8");
+            InputStream inputStream = new ClassPathResource(fileName).getInputStream();
+            InputStreamReader reader = new InputStreamReader(inputStream , "UTF-8" );
             int ch = 0;
             StringBuffer sb = new StringBuffer();
             while ((ch = reader.read()) != -1) {
                 sb.append((char) ch);
             }
-            fileReader.close();
             reader.close();
             jsonStr = sb.toString();
             return jsonStr;
