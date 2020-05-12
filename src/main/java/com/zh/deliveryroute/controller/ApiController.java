@@ -10,6 +10,8 @@ import com.zh.deliveryroute.repository.NodeRepository;
 import com.zh.deliveryroute.repository.TemplateResponsitory;
 import com.zh.deliveryroute.service.AlgorithService;
 import com.zh.deliveryroute.utils.ServerResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,7 @@ public class ApiController {
     CalcHistoryRepository calcHistoryRepository;
     @Autowired
     AlgorithService algorithService;
+    private static final Logger logger = LoggerFactory.getLogger(AlgorithService.class);
     @GetMapping("/getNodeList")
     public ServerResponse getNodeList() {
        List<NodeData> list = nodeRepository.findAll();
@@ -46,6 +49,7 @@ public class ApiController {
             maxroad = jsonObject.getInteger("maxroad");
             maxCarring = jsonObject.getJSONArray("maxCarring");
         } catch (Exception e) {
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError("参数出错",e.toString());
         }
@@ -60,6 +64,7 @@ public class ApiController {
             Optional<NodeData> obj = nodeRepository.findById(id);
             nodeData = obj.get();
         } catch (Exception e) {
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError("节点数据获取失败",e.toString());
         }
@@ -72,6 +77,7 @@ public class ApiController {
                 res = algorithService.getRouteByDis(nodeData,n,maxroad,maxCarringArr);
             }
         } catch (Exception e) {
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError("计算出错",e.toString());
         }
@@ -91,6 +97,7 @@ public class ApiController {
             maxroad = jsonObject.getInteger("maxroad");
             upCarring = jsonObject.get("upCarrying");
         } catch (Exception e) {
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError("参数出错",e.toString());
         }
@@ -99,6 +106,7 @@ public class ApiController {
         try {
             res = algorithService.getrouteByRound(m,q,maxroad);
         } catch (Exception e) {
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError("计算出错",e.toString());
         }
@@ -144,6 +152,7 @@ public class ApiController {
         try {
             nodeRepository.deleteById(id);
         } catch (Exception e) {
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError(e.toString(),null);
         }
@@ -163,6 +172,7 @@ public class ApiController {
         try {
             Template = templateResponsitory.findAll();
         } catch (Exception e) {
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError(e.toString(),null);
         }
@@ -176,6 +186,7 @@ public class ApiController {
 
             calcHistoryRepository.insert(calcHistory);
         }catch (Exception e){
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError(e.toString(),null);
         }
@@ -188,6 +199,7 @@ public class ApiController {
         try {
             list = calcHistoryRepository.findAll();
         }catch (Exception e){
+            logger.error(e.toString());
             e.printStackTrace();
             return ServerResponse.createByError(e.toString(),null);
         }
